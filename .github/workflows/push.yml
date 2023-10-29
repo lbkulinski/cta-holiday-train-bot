@@ -1,0 +1,25 @@
+name: CTA Holiday Train Bot CI
+on:
+  push:
+    branches: [ "main" ]
+jobs:
+  build:
+    name: Build with Maven
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v3
+      - name: Setup JDK 20
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+      - name: Build with Maven
+        env:
+          CTA_RUN: ${{ secrets.CTA_RUN }}
+          CTA_TRAIN_API_KEY: ${{ secrets.CTA_TRAIN_API_KEY }}
+          MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN }}
+          MASTODON_INSTANCE: ${{ secrets.MASTODON_INSTANCE }}
+          ROLLBAR_ACCESS_TOKEN: ${{ secrets.ROLLBAR_ACCESS_TOKEN }}
+          ROLLBAR_ENVIRONMENT: ${{ secrets.ROLLBAR_ENVIRONMENT }}
+        run: mvn -B package --file pom.xml
