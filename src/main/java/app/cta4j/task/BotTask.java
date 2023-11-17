@@ -1,6 +1,7 @@
 package app.cta4j.task;
 
 import app.cta4j.client.TrainClient;
+import app.cta4j.client.TwitterClient;
 import app.cta4j.model.FollowBody;
 import app.cta4j.model.FollowResponse;
 import app.cta4j.model.Train;
@@ -24,6 +25,8 @@ public final class BotTask {
 
     private final int run;
 
+    private final TwitterClient twitterClient;
+
     private final MastodonClient mastodonClient;
 
     private final Rollbar rollbar;
@@ -35,11 +38,13 @@ public final class BotTask {
     }
 
     @Autowired
-    public BotTask(TrainClient trainClient, @Value("${cta.run}") int run, MastodonClient mastodonClient,
-        Rollbar rollbar) {
+    public BotTask(TrainClient trainClient, @Value("${cta.run}") int run, TwitterClient twitterClient,
+        MastodonClient mastodonClient, Rollbar rollbar) {
         this.trainClient = Objects.requireNonNull(trainClient);
 
         this.run = run;
+
+        this.twitterClient = Objects.requireNonNull(twitterClient);
 
         this.mastodonClient = Objects.requireNonNull(mastodonClient);
 
@@ -120,6 +125,16 @@ public final class BotTask {
 
         if (status == null) {
             return;
+        }
+
+        try {
+            this.twitterClient.createTweet(status);
+        } catch (Exception e) {
+            this.rollbar.error(e);
+
+            String message = e.getMessage();
+
+            BotTask.LOGGER.error(message, e);
         }
 
         try {

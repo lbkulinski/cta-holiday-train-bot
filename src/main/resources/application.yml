@@ -1,6 +1,9 @@
 cta:
   train-api-key: ${CTA_TRAIN_API_KEY}
   run: ${CTA_RUN}
+twitter:
+    consumer-key: ${TWITTER_CONSUMER_KEY}
+    consumer-secret: ${TWITTER_CONSUMER_SECRET}
 mastodon:
   instance: ${MASTODON_INSTANCE}
   access-token: ${MASTODON_ACCESS_TOKEN}
