@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
@@ -90,12 +91,33 @@ public final class TwitterClient {
 
         int created = HttpStatus.CREATED.value();
 
-        if (code != created) {
-            String message = "Failed to create tweet";
-
-            TwitterClient.LOGGER.error(message);
-
-            this.rollbar.error(message);
+        if (code == created) {
+            return;
         }
+
+        String message = "Failed to create tweet";
+
+        TwitterClient.LOGGER.error(message);
+
+        String responseMessage = response.getMessage();
+
+        String body = "";
+
+        try {
+            body = response.getBody();
+        } catch (IOException e) {
+            String exceptionMessage = e.getMessage();
+
+            TwitterClient.LOGGER.error(exceptionMessage, e);
+
+            this.rollbar.error(e);
+        }
+
+        Map<String, Object> custom = Map.of(
+            "message", responseMessage,
+            "body", body
+        );
+
+        this.rollbar.error(message, custom);
     }
 }
