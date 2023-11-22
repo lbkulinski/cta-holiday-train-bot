@@ -9,6 +9,9 @@ twitter:
 mastodon:
   instance: ${MASTODON_INSTANCE}
   access-token: ${MASTODON_ACCESS_TOKEN}
+bluesky:
+  handle: ${BLUESKY_HANDLE}
+  app-password: ${BLUESKY_APP_PASSWORD}
 rollbar:
   access-token: ${ROLLBAR_ACCESS_TOKEN}
   environment: ${ROLLBAR_ENVIRONMENT}
