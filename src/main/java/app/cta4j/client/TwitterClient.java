@@ -58,6 +58,8 @@ public final class TwitterClient {
     }
 
     public void createTweet(String text) {
+        Objects.requireNonNull(text);
+
         String url = "https://api.twitter.com/2/tweets";
 
         OAuthRequest request = new OAuthRequest(Verb.POST, url);

@@ -1,5 +1,6 @@
 package app.cta4j.task;
 
+import app.cta4j.client.BlueskyClient;
 import app.cta4j.client.TrainClient;
 import app.cta4j.client.TwitterClient;
 import app.cta4j.model.FollowBody;
@@ -29,6 +30,8 @@ public final class BotTask {
 
     private final MastodonClient mastodonClient;
 
+    private final BlueskyClient blueskyClient;
+
     private final Rollbar rollbar;
 
     private static final Logger LOGGER;
@@ -39,7 +42,7 @@ public final class BotTask {
 
     @Autowired
     public BotTask(TrainClient trainClient, @Value("${cta.run}") int run, TwitterClient twitterClient,
-        MastodonClient mastodonClient, Rollbar rollbar) {
+        MastodonClient mastodonClient, BlueskyClient blueskyClient, Rollbar rollbar) {
         this.trainClient = Objects.requireNonNull(trainClient);
 
         this.run = run;
@@ -47,6 +50,8 @@ public final class BotTask {
         this.twitterClient = Objects.requireNonNull(twitterClient);
 
         this.mastodonClient = Objects.requireNonNull(mastodonClient);
+
+        this.blueskyClient = Objects.requireNonNull(blueskyClient);
 
         this.rollbar = Objects.requireNonNull(rollbar);
     }
@@ -119,7 +124,7 @@ public final class BotTask {
             arrivalTime);
     }
 
-    @Scheduled(cron = "*/5 * * * * *")
+    @Scheduled(fixedRate = 300000L)
     public void postStatus() {
         String status = this.getStatus();
 
@@ -142,6 +147,16 @@ public final class BotTask {
                                .postStatus(status)
                                .execute();
         } catch (BigBoneRequestException e) {
+            this.rollbar.error(e);
+
+            String message = e.getMessage();
+
+            BotTask.LOGGER.error(message, e);
+        }
+
+        try {
+            this.blueskyClient.createPost(status);
+        } catch (Exception e) {
             this.rollbar.error(e);
 
             String message = e.getMessage();

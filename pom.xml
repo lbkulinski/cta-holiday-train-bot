@@ -61,6 +61,11 @@
 			<version>2.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
+			<groupId>com.github.uakihir0</groupId>
+			<artifactId>bsky4j</artifactId>
+			<version>0.5.2</version>
+		</dependency>
+		<dependency>
 			<groupId>com.rollbar</groupId>
 			<artifactId>rollbar-spring-boot3-webmvc</artifactId>
 			<version>1.10.0</version>
@@ -77,6 +82,10 @@
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
+		</repository>
+		<repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
 		</repository>
 	</repositories>
 	<build>
