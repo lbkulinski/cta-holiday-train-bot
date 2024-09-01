@@ -1,51 +1,55 @@
-package app.cta4j.task;
+package app.cta4j.runner;
 
-import app.cta4j.client.BlueskyClient;
 import app.cta4j.client.TrainClient;
-import app.cta4j.client.TwitterClient;
 import app.cta4j.model.FollowBody;
 import app.cta4j.model.FollowResponse;
 import app.cta4j.model.Train;
 import com.rollbar.notifier.Rollbar;
+import io.github.redouane59.twitter.TwitterClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import social.bigbone.MastodonClient;
 import social.bigbone.api.exception.BigBoneRequestException;
+import work.socialhub.kbsky.Bluesky;
+import work.socialhub.kbsky.api.entity.app.bsky.feed.FeedPostRequest;
+import work.socialhub.kbsky.api.entity.com.atproto.server.ServerCreateSessionRequest;
 
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Component
-public final class BotTask {
+public final class BotRunner implements ApplicationRunner {
     private final TrainClient trainClient;
 
-    private final int run;
+    private final Environment environment;
 
     private final TwitterClient twitterClient;
 
     private final MastodonClient mastodonClient;
 
-    private final BlueskyClient blueskyClient;
+    private final Bluesky blueskyClient;
 
     private final Rollbar rollbar;
 
     private static final Logger LOGGER;
 
     static {
-        LOGGER = LoggerFactory.getLogger(BotTask.class);
+        LOGGER = LoggerFactory.getLogger(BotRunner.class);
     }
 
     @Autowired
-    public BotTask(TrainClient trainClient, @Value("${cta.run}") int run, TwitterClient twitterClient,
-        MastodonClient mastodonClient, BlueskyClient blueskyClient, Rollbar rollbar) {
+    public BotRunner(TrainClient trainClient, Environment environment, TwitterClient twitterClient,
+        MastodonClient mastodonClient, Bluesky blueskyClient, Rollbar rollbar) {
         this.trainClient = Objects.requireNonNull(trainClient);
 
-        this.run = run;
+        this.environment = Objects.requireNonNull(environment);
 
         this.twitterClient = Objects.requireNonNull(twitterClient);
 
@@ -57,16 +61,42 @@ public final class BotTask {
     }
 
     private Train getNextTrain() {
+        String runString = this.environment.getProperty("cta.run");
+
+        if (runString == null) {
+            String message = "Run is null";
+
+            this.rollbar.error(message);
+
+            BotRunner.LOGGER.error(message);
+
+            return null;
+        }
+
+        int run;
+
+        try {
+            run = Integer.parseInt(runString);
+        } catch (NumberFormatException e) {
+            String message = "Run is not a number";
+
+            this.rollbar.error(e);
+
+            BotRunner.LOGGER.error(message, e);
+
+            return null;
+        }
+
         FollowResponse response;
 
         try {
-            response = this.trainClient.followTrain(this.run);
+            response = this.trainClient.followTrain(run);
         } catch (Exception e) {
             this.rollbar.error(e);
 
             String message = e.getMessage();
 
-            BotTask.LOGGER.error(message, e);
+            BotRunner.LOGGER.error(message, e);
 
             return null;
         }
@@ -93,7 +123,7 @@ public final class BotTask {
 
         sortedTrains.sort(comparator);
 
-        return sortedTrains.get(0);
+        return sortedTrains.getFirst();
     }
 
     private String getStatus() {
@@ -124,8 +154,53 @@ public final class BotTask {
             arrivalTime);
     }
 
-    @Scheduled(fixedRate = 300000L)
-    public void postStatus() {
+    private void postSkeet(String status) {
+        Objects.requireNonNull(status);
+
+        ServerCreateSessionRequest serverCreateSessionRequest = new ServerCreateSessionRequest();
+
+        String handle = this.environment.getProperty("bluesky.handle");
+
+        if (handle == null) {
+            String message = "Bluesky handle is null";
+
+            this.rollbar.error(message);
+
+            BotRunner.LOGGER.error(message);
+
+            return;
+        }
+
+        serverCreateSessionRequest.setIdentifier(handle);
+
+        String appPassword = this.environment.getProperty("bluesky.app-password");
+
+        if (appPassword == null) {
+            String message = "Bluesky app password is null";
+
+            this.rollbar.error(message);
+
+            BotRunner.LOGGER.error(message);
+
+            return;
+        }
+
+        serverCreateSessionRequest.setPassword(appPassword);
+
+        String accessJwt = this.blueskyClient.server()
+                                             .createSession(serverCreateSessionRequest)
+                                             .getData().accessJwt;
+
+        FeedPostRequest feedPostRequest = new FeedPostRequest(accessJwt);
+
+        feedPostRequest.setText(status);
+
+        this.blueskyClient.feed()
+                          .post(feedPostRequest);
+    }
+
+    @Override
+    public void run(ApplicationArguments args) {
         String status = this.getStatus();
 
         if (status == null) {
@@ -133,13 +208,13 @@ public final class BotTask {
         }
 
         try {
-            this.twitterClient.createTweet(status);
+            this.twitterClient.postTweet(status);
         } catch (Exception e) {
             this.rollbar.error(e);
 
             String message = e.getMessage();
 
-            BotTask.LOGGER.error(message, e);
+            BotRunner.LOGGER.error(message, e);
         }
 
         try {
@@ -151,17 +226,17 @@ public final class BotTask {
 
             String message = e.getMessage();
 
-            BotTask.LOGGER.error(message, e);
+            BotRunner.LOGGER.error(message, e);
         }
 
         try {
-            this.blueskyClient.createPost(status);
+            this.postSkeet(status);
         } catch (Exception e) {
             this.rollbar.error(e);
 
             String message = e.getMessage();
 
-            BotTask.LOGGER.error(message, e);
+            BotRunner.LOGGER.error(message, e);
         }
     }
 }
