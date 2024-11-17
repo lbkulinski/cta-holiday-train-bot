@@ -25,16 +25,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RouteApiApi {
+public class RouteApi {
     private ApiClient localVarApiClient;
     private int localHostIndex;
     private String localCustomBaseUrl;
 
-    public RouteApiApi() {
+    public RouteApi() {
         this(Configuration.getDefaultApiClient());
     }
 
-    public RouteApiApi(ApiClient apiClient) {
+    public RouteApi(ApiClient apiClient) {
         this.localVarApiClient = apiClient;
     }
 

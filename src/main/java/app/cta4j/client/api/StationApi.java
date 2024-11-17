@@ -24,16 +24,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class StationApiApi {
+public class StationApi {
     private ApiClient localVarApiClient;
     private int localHostIndex;
     private String localCustomBaseUrl;
 
-    public StationApiApi() {
+    public StationApi() {
         this(Configuration.getDefaultApiClient());
     }
 
-    public StationApiApi(ApiClient apiClient) {
+    public StationApi(ApiClient apiClient) {
         this.localVarApiClient = apiClient;
     }
 

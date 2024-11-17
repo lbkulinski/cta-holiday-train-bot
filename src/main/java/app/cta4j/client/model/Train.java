@@ -31,7 +31,7 @@ import java.util.Set;
 /**
  * Represents a train and its schedule information.
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-11-17T14:44:43.955290-06:00[America/Chicago]", comments = "Generator version: 7.7.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-11-17T15:20:11.832778-06:00[America/Chicago]", comments = "Generator version: 7.7.0")
 public class Train {
   public static final String SERIALIZED_NAME_RUN = "run";
   @SerializedName(SERIALIZED_NAME_RUN)
@@ -147,7 +147,7 @@ public class Train {
    * The unique run number of the train.
    * @return run
    */
-  @javax.annotation.Nonnull
+  @jakarta.annotation.Nonnull
   public Integer getRun() {
     return run;
   }
@@ -166,7 +166,7 @@ public class Train {
    * Represents the different transit lines in the system.
    * @return line
    */
-  @javax.annotation.Nonnull
+  @jakarta.annotation.Nonnull
   public LineEnum getLine() {
     return line;
   }
@@ -185,7 +185,7 @@ public class Train {
    * The final destination of the train.
    * @return destination
    */
-  @javax.annotation.Nonnull
+  @jakarta.annotation.Nonnull
   public String getDestination() {
     return destination;
   }
@@ -204,7 +204,7 @@ public class Train {
    * The station where the train will next arrive.
    * @return station
    */
-  @javax.annotation.Nonnull
+  @jakarta.annotation.Nonnull
   public String getStation() {
     return station;
   }
@@ -223,7 +223,7 @@ public class Train {
    * The time when the arrival prediction was made.
    * @return predictionTime
    */
-  @javax.annotation.Nonnull
+  @jakarta.annotation.Nonnull
   public OffsetDateTime getPredictionTime() {
     return predictionTime;
   }
@@ -242,7 +242,7 @@ public class Train {
    * The estimated arrival time of the train at the station.
    * @return arrivalTime
    */
-  @javax.annotation.Nonnull
+  @jakarta.annotation.Nonnull
   public OffsetDateTime getArrivalTime() {
     return arrivalTime;
   }
@@ -261,7 +261,7 @@ public class Train {
    * Indicates whether the train is due to arrive soon.
    * @return due
    */
-  @javax.annotation.Nonnull
+  @jakarta.annotation.Nonnull
   public Boolean getDue() {
     return due;
   }
@@ -280,7 +280,7 @@ public class Train {
    * Indicates whether the train is arriving according to its schedule.
    * @return scheduled
    */
-  @javax.annotation.Nonnull
+  @jakarta.annotation.Nonnull
   public Boolean getScheduled() {
     return scheduled;
   }
@@ -299,7 +299,7 @@ public class Train {
    * Indicates whether the train is delayed.
    * @return delayed
    */
-  @javax.annotation.Nonnull
+  @jakarta.annotation.Nonnull
   public Boolean getDelayed() {
     return delayed;
   }

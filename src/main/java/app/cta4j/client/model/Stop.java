@@ -29,7 +29,7 @@ import java.util.Set;
 /**
  * Represents a stop on a route.
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-11-17T14:44:43.955290-06:00[America/Chicago]", comments = "Generator version: 7.7.0")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2024-11-17T15:20:11.832778-06:00[America/Chicago]", comments = "Generator version: 7.7.0")
 public class Stop {
   public static final String SERIALIZED_NAME_ID = "id";
   @SerializedName(SERIALIZED_NAME_ID)
@@ -51,7 +51,7 @@ public class Stop {
    * The unique identifier of the stop.
    * @return id
    */
-  @javax.annotation.Nonnull
+  @jakarta.annotation.Nonnull
   public Integer getId() {
     return id;
   }
@@ -70,7 +70,7 @@ public class Stop {
    * The name of the stop.
    * @return name
    */
-  @javax.annotation.Nonnull
+  @jakarta.annotation.Nonnull
   public String getName() {
     return name;
   }

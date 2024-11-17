@@ -14,7 +14,7 @@
 package app.cta4j.client.api;
 
 import app.cta4j.client.invoker.*;
-import app.cta4j.client.model.Train;
+import app.cta4j.client.model.Bus;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
@@ -23,16 +23,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TrainApiApi {
+public class BusApi {
     private ApiClient localVarApiClient;
     private int localHostIndex;
     private String localCustomBaseUrl;
 
-    public TrainApiApi() {
+    public BusApi() {
         this(Configuration.getDefaultApiClient());
     }
 
-    public TrainApiApi(ApiClient apiClient) {
+    public BusApi(ApiClient apiClient) {
         this.localVarApiClient = apiClient;
     }
 
@@ -61,20 +61,20 @@ public class TrainApiApi {
     }
 
     /**
-     * Build call for getUpcomingStations
-     * @param run The unique run number of the train. (required)
+     * Build call for getUpcomingStops
+     * @param id The unique ID of the bus. (required)
      * @param _callback Callback for upload/download progress
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
      * @http.response.details
      <table summary="Response Details" border="1">
         <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 404 </td><td> Train run not found. </td><td>  -  </td></tr>
-        <tr><td> 200 </td><td> Successfully retrieved the list of upcoming stations. </td><td>  -  </td></tr>
+        <tr><td> 404 </td><td> Bus not found. </td><td>  -  </td></tr>
         <tr><td> 500 </td><td> Internal server error. </td><td>  -  </td></tr>
+        <tr><td> 200 </td><td> Successfully retrieved the list of upcoming stops. </td><td>  -  </td></tr>
      </table>
      */
-    public okhttp3.Call getUpcomingStationsCall(Integer run, final ApiCallback _callback) throws ApiException {
+    public okhttp3.Call getUpcomingStopsCall(Integer id, final ApiCallback _callback) throws ApiException {
         String basePath = null;
         // Operation Servers
         String[] localBasePaths = new String[] {  };
@@ -91,8 +91,8 @@ public class TrainApiApi {
         Object localVarPostBody = null;
 
         // create path and map variables
-        String localVarPath = "/api/trains/{run}/stations"
-            .replace("{" + "run" + "}", localVarApiClient.escapeString(run.toString()));
+        String localVarPath = "/api/buses/{id}/stops"
+            .replace("{" + "id" + "}", localVarApiClient.escapeString(id.toString()));
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
@@ -120,74 +120,74 @@ public class TrainApiApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private okhttp3.Call getUpcomingStationsValidateBeforeCall(Integer run, final ApiCallback _callback) throws ApiException {
-        // verify the required parameter 'run' is set
-        if (run == null) {
-            throw new ApiException("Missing the required parameter 'run' when calling getUpcomingStations(Async)");
+    private okhttp3.Call getUpcomingStopsValidateBeforeCall(Integer id, final ApiCallback _callback) throws ApiException {
+        // verify the required parameter 'id' is set
+        if (id == null) {
+            throw new ApiException("Missing the required parameter 'id' when calling getUpcomingStops(Async)");
         }
 
-        return getUpcomingStationsCall(run, _callback);
+        return getUpcomingStopsCall(id, _callback);
 
     }
 
     /**
-     * Retrieve upcoming stations for a train run.
-     * Retrieves a list of upcoming stations for a specific train, identified by its run number.
-     * @param run The unique run number of the train. (required)
-     * @return List&lt;Train&gt;
+     * Retrieve upcoming stops for a bus.
+     * Retrieves a list of upcoming stops for a specific bus, identified by its ID.
+     * @param id The unique ID of the bus. (required)
+     * @return List&lt;Bus&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      * @http.response.details
      <table summary="Response Details" border="1">
         <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 404 </td><td> Train run not found. </td><td>  -  </td></tr>
-        <tr><td> 200 </td><td> Successfully retrieved the list of upcoming stations. </td><td>  -  </td></tr>
+        <tr><td> 404 </td><td> Bus not found. </td><td>  -  </td></tr>
         <tr><td> 500 </td><td> Internal server error. </td><td>  -  </td></tr>
+        <tr><td> 200 </td><td> Successfully retrieved the list of upcoming stops. </td><td>  -  </td></tr>
      </table>
      */
-    public List<Train> getUpcomingStations(Integer run) throws ApiException {
-        ApiResponse<List<Train>> localVarResp = getUpcomingStationsWithHttpInfo(run);
+    public List<Bus> getUpcomingStops(Integer id) throws ApiException {
+        ApiResponse<List<Bus>> localVarResp = getUpcomingStopsWithHttpInfo(id);
         return localVarResp.getData();
     }
 
     /**
-     * Retrieve upcoming stations for a train run.
-     * Retrieves a list of upcoming stations for a specific train, identified by its run number.
-     * @param run The unique run number of the train. (required)
-     * @return ApiResponse&lt;List&lt;Train&gt;&gt;
+     * Retrieve upcoming stops for a bus.
+     * Retrieves a list of upcoming stops for a specific bus, identified by its ID.
+     * @param id The unique ID of the bus. (required)
+     * @return ApiResponse&lt;List&lt;Bus&gt;&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      * @http.response.details
      <table summary="Response Details" border="1">
         <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 404 </td><td> Train run not found. </td><td>  -  </td></tr>
-        <tr><td> 200 </td><td> Successfully retrieved the list of upcoming stations. </td><td>  -  </td></tr>
+        <tr><td> 404 </td><td> Bus not found. </td><td>  -  </td></tr>
         <tr><td> 500 </td><td> Internal server error. </td><td>  -  </td></tr>
+        <tr><td> 200 </td><td> Successfully retrieved the list of upcoming stops. </td><td>  -  </td></tr>
      </table>
      */
-    public ApiResponse<List<Train>> getUpcomingStationsWithHttpInfo(Integer run) throws ApiException {
-        okhttp3.Call localVarCall = getUpcomingStationsValidateBeforeCall(run, null);
-        Type localVarReturnType = new TypeToken<List<Train>>(){}.getType();
+    public ApiResponse<List<Bus>> getUpcomingStopsWithHttpInfo(Integer id) throws ApiException {
+        okhttp3.Call localVarCall = getUpcomingStopsValidateBeforeCall(id, null);
+        Type localVarReturnType = new TypeToken<List<Bus>>(){}.getType();
         return localVarApiClient.execute(localVarCall, localVarReturnType);
     }
 
     /**
-     * Retrieve upcoming stations for a train run. (asynchronously)
-     * Retrieves a list of upcoming stations for a specific train, identified by its run number.
-     * @param run The unique run number of the train. (required)
+     * Retrieve upcoming stops for a bus. (asynchronously)
+     * Retrieves a list of upcoming stops for a specific bus, identified by its ID.
+     * @param id The unique ID of the bus. (required)
      * @param _callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      * @http.response.details
      <table summary="Response Details" border="1">
         <tr><td> Status Code </td><td> Description </td><td> Response Headers </td></tr>
-        <tr><td> 404 </td><td> Train run not found. </td><td>  -  </td></tr>
-        <tr><td> 200 </td><td> Successfully retrieved the list of upcoming stations. </td><td>  -  </td></tr>
+        <tr><td> 404 </td><td> Bus not found. </td><td>  -  </td></tr>
         <tr><td> 500 </td><td> Internal server error. </td><td>  -  </td></tr>
+        <tr><td> 200 </td><td> Successfully retrieved the list of upcoming stops. </td><td>  -  </td></tr>
      </table>
      */
-    public okhttp3.Call getUpcomingStationsAsync(Integer run, final ApiCallback<List<Train>> _callback) throws ApiException {
+    public okhttp3.Call getUpcomingStopsAsync(Integer id, final ApiCallback<List<Bus>> _callback) throws ApiException {
 
-        okhttp3.Call localVarCall = getUpcomingStationsValidateBeforeCall(run, _callback);
-        Type localVarReturnType = new TypeToken<List<Train>>(){}.getType();
+        okhttp3.Call localVarCall = getUpcomingStopsValidateBeforeCall(id, _callback);
+        Type localVarReturnType = new TypeToken<List<Bus>>(){}.getType();
         localVarApiClient.executeAsync(localVarCall, localVarReturnType, _callback);
         return localVarCall;
     }

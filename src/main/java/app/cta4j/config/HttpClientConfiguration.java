@@ -1,13 +1,11 @@
 package app.cta4j.config;
 
-import app.cta4j.client.TrainClient;
+import app.cta4j.client.api.TrainApi;
+import app.cta4j.client.invoker.ApiClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.support.WebClientAdapter;
-import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
 import java.util.Objects;
 
@@ -21,18 +19,14 @@ public class HttpClientConfiguration {
     }
 
     @Bean
-    public TrainClient trainClient() {
+    public TrainApi trainApi() {
         String baseUrl = """
         https://lapi.transitchicago.com/api/1.0?key=%s&outputType=json""".formatted(this.apiKey);
 
-        WebClient webClient = WebClient.create(baseUrl);
+        ApiClient apiClient = new ApiClient();
 
-        WebClientAdapter webClientAdapter = WebClientAdapter.forClient(webClient);
+        apiClient.setBasePath(baseUrl);
 
-        HttpServiceProxyFactory factory = HttpServiceProxyFactory.builder()
-                                                                 .clientAdapter(webClientAdapter)
-                                                                 .build();
-
-        return factory.createClient(TrainClient.class);
+        return new TrainApi(apiClient);
     }
 }

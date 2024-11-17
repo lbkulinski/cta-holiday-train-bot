@@ -1,15 +1,12 @@
 package app.cta4j.runner;
 
-import app.cta4j.client.TrainClient;
-import app.cta4j.model.FollowBody;
-import app.cta4j.model.FollowResponse;
-import app.cta4j.model.Train;
+import app.cta4j.client.api.TrainApi;
+import app.cta4j.client.model.Train;
 import com.rollbar.notifier.Rollbar;
 import io.github.redouane59.twitter.TwitterClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.env.Environment;
@@ -26,7 +23,7 @@ import java.util.*;
 
 @Component
 public final class BotRunner implements ApplicationRunner {
-    private final TrainClient trainClient;
+    private final TrainApi trainApi;
 
     private final Environment environment;
 
@@ -45,9 +42,9 @@ public final class BotRunner implements ApplicationRunner {
     }
 
     @Autowired
-    public BotRunner(TrainClient trainClient, Environment environment, TwitterClient twitterClient,
+    public BotRunner(TrainApi trainApi, Environment environment, TwitterClient twitterClient,
         MastodonClient mastodonClient, Bluesky blueskyClient, Rollbar rollbar) {
-        this.trainClient = Objects.requireNonNull(trainClient);
+        this.trainApi = Objects.requireNonNull(trainApi);
 
         this.environment = Objects.requireNonNull(environment);
 
@@ -87,10 +84,10 @@ public final class BotRunner implements ApplicationRunner {
             return null;
         }
 
-        FollowResponse response;
+        List<Train> trains;
 
         try {
-            response = this.trainClient.followTrain(run);
+            trains = this.trainApi.getUpcomingStations(run);
         } catch (Exception e) {
             this.rollbar.error(e);
 
@@ -101,23 +98,11 @@ public final class BotRunner implements ApplicationRunner {
             return null;
         }
 
-        if (response == null) {
-            return null;
-        }
-
-        FollowBody body = response.body();
-
-        if (body == null) {
-            return null;
-        }
-
-        Set<Train> trains = body.trains();
-
         if ((trains == null) || trains.isEmpty()) {
             return null;
         }
 
-        Comparator<Train> comparator = Comparator.comparing(Train::arrivalTime);
+        Comparator<Train> comparator = Comparator.comparing(Train::getArrivalTime);
 
         List<Train> sortedTrains = new ArrayList<>(trains);
 
@@ -133,19 +118,21 @@ public final class BotRunner implements ApplicationRunner {
             return null;
         }
 
-        String destination = train.destination();
+        String destination = train.getDestination();
 
-        String line = train.line();
+        String line = train.getLine()
+                           .toString();
 
-        int run = train.run();
+        int run = train.getRun();
 
-        String station = train.station();
+        String station = train.getStation();
 
         ZoneId zoneId = ZoneId.of("America/Chicago");
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("h:mm a");
 
-        String arrivalTime = train.arrivalTime()
+        String arrivalTime = train.getArrivalTime()
+                                  .toInstant()
                                   .atZone(zoneId)
                                   .toLocalDateTime()
                                   .format(formatter);
