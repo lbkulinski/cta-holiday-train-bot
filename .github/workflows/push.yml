@@ -4,20 +4,27 @@ on:
     branches: [ "main" ]
 jobs:
   build:
-    name: Build with Maven
+    name: Build and Test with Maven
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repository
         uses: actions/checkout@v3
-      - name: Setup JDK 20
+      - name: Setup JDK 21
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
           java-version: '21'
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
       - name: Build with Maven
         env:
           CTA_RUN: ${{ secrets.CTA_RUN }}
-          CTA_TRAIN_API_KEY: ${{ secrets.CTA_TRAIN_API_KEY }}
+          CTA4J_BACK_END_URL: ${{ secrets.CTA4J_BACK_END_URL }}
           TWITTER_CONSUMER_KEY: ${{ secrets.TWITTER_CONSUMER_KEY }}
           TWITTER_CONSUMER_SECRET: ${{ secrets.TWITTER_CONSUMER_SECRET }}
           TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
@@ -30,4 +37,4 @@ jobs:
           BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
           ROLLBAR_ACCESS_TOKEN: ${{ secrets.ROLLBAR_ACCESS_TOKEN }}
           ROLLBAR_ENVIRONMENT: ${{ secrets.ROLLBAR_ENVIRONMENT }}
-        run: mvn -B package --file pom.xml
+        run: mvn clean package -B --file pom.xml
