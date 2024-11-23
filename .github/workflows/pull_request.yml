@@ -14,13 +14,6 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '21'
-      - name: Cache Maven packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
       - name: Maven Clean
         run: mvn clean --file pom.xml
       - name: Maven Package
