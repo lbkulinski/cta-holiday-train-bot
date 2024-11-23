@@ -1,24 +1,20 @@
-package app.cta4j.runner;
+package app.cta4j.service;
 
 import app.cta4j.client.bsky.BlueskyClient;
-import app.cta4j.service.StatusService;
+import app.cta4j.task.BotTask;
 import com.rollbar.notifier.Rollbar;
 import io.github.redouane59.twitter.TwitterClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import social.bigbone.MastodonClient;
 import social.bigbone.api.exception.BigBoneRequestException;
 
-import java.util.*;
+import java.util.Objects;
 
-@Component
-public final class BotRunner implements ApplicationRunner {
-    private final StatusService service;
-
+@Service
+public final class MessageService {
     private final TwitterClient twitterClient;
 
     private final MastodonClient mastodonClient;
@@ -30,14 +26,12 @@ public final class BotRunner implements ApplicationRunner {
     private static final Logger LOGGER;
 
     static {
-        LOGGER = LoggerFactory.getLogger(BotRunner.class);
+        LOGGER = LoggerFactory.getLogger(BotTask.class);
     }
 
     @Autowired
-    public BotRunner(StatusService service, TwitterClient twitterClient, MastodonClient mastodonClient,
+    public MessageService(TwitterClient twitterClient, MastodonClient mastodonClient,
         BlueskyClient blueskyClient, Rollbar rollbar) {
-        this.service = Objects.requireNonNull(service);
-
         this.twitterClient = Objects.requireNonNull(twitterClient);
 
         this.mastodonClient = Objects.requireNonNull(mastodonClient);
@@ -47,13 +41,8 @@ public final class BotRunner implements ApplicationRunner {
         this.rollbar = Objects.requireNonNull(rollbar);
     }
 
-    @Override
-    public void run(ApplicationArguments args) {
-        String status = this.service.getStatus();
-
-        if (status == null) {
-            return;
-        }
+    public void postStatus(String status) {
+        Objects.requireNonNull(status);
 
         try {
             this.twitterClient.postTweet(status);
@@ -62,19 +51,19 @@ public final class BotRunner implements ApplicationRunner {
 
             String message = e.getMessage();
 
-            BotRunner.LOGGER.error(message, e);
+            MessageService.LOGGER.error(message, e);
         }
 
         try {
             this.mastodonClient.statuses()
-                               .postStatus(status)
-                               .execute();
+                    .postStatus(status)
+                    .execute();
         } catch (BigBoneRequestException e) {
             this.rollbar.error(e);
 
             String message = e.getMessage();
 
-            BotRunner.LOGGER.error(message, e);
+            MessageService.LOGGER.error(message, e);
         }
 
         try {
@@ -84,7 +73,7 @@ public final class BotRunner implements ApplicationRunner {
 
             String message = e.getMessage();
 
-            BotRunner.LOGGER.error(message, e);
+            MessageService.LOGGER.error(message, e);
         }
     }
 }
