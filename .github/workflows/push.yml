@@ -24,7 +24,7 @@ jobs:
       - name: Build with Maven
         env:
           CTA_RUN: ${{ secrets.CTA_RUN }}
-          CTA_TRAIN_API_KEY: ${{ secrets.CTA_TRAIN_API_KEY }}
+          CTA4J_BACK_END_URL: ${{ secrets.CTA4J_BACK_END_URL }}
           TWITTER_CONSUMER_KEY: ${{ secrets.TWITTER_CONSUMER_KEY }}
           TWITTER_CONSUMER_SECRET: ${{ secrets.TWITTER_CONSUMER_SECRET }}
           TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
