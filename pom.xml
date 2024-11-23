@@ -72,11 +72,6 @@
 			<version>2.0.21</version>
 		</dependency>
 		<dependency>
-			<groupId>com.restfb</groupId>
-			<artifactId>restfb</artifactId>
-			<version>2024.14.0</version>
-		</dependency>
-		<dependency>
 			<groupId>com.rollbar</groupId>
 			<artifactId>rollbar-spring-boot3-webmvc</artifactId>
 			<version>1.10.3</version>
@@ -87,23 +82,6 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	<repositories>
-		<repository>
-			<id>repsy</id>
-			<url>https://repo.repsy.io/mvn/uakihir0/public</url>
-		</repository>
-		<repository>
-			<id>maven-central-snapshots</id>
-			<name>Maven Central Snapshot Repository</name>
-			<url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
 	<build>
 		<plugins>
 			<plugin>

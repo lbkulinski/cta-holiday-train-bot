@@ -2,6 +2,7 @@ package app.cta4j.task;
 
 import app.cta4j.service.MessageService;
 import app.cta4j.service.StatusService;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -22,7 +23,7 @@ public final class BotTask {
     }
 
     @Scheduled(cron = "0 0/5 * * * *")
-    public void run() {
+    public void runScheduledTask() {
         String status = this.service.getStatus();
 
         if (status == null) {
@@ -30,5 +31,10 @@ public final class BotTask {
         }
 
         this.messageService.postStatus(status);
+    }
+
+    @PostConstruct
+    public void runOnStartup() {
+        this.runScheduledTask();
     }
 }
