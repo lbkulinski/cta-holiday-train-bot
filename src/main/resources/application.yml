@@ -1,5 +1,6 @@
+cta4j:
+  back-end-url: ${CTA4J_BACK_END_URL}
 cta:
-  train-api-key: ${CTA_TRAIN_API_KEY}
   run: ${CTA_RUN}
 twitter:
     access-token: ${TWITTER_ACCESS_TOKEN}

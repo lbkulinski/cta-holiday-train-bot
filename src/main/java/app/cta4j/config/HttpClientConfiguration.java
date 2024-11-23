@@ -1,38 +1,29 @@
 package app.cta4j.config;
 
-import app.cta4j.client.TrainClient;
+import app.cta4j.client.cta4j.api.TrainApi;
+import app.cta4j.client.cta4j.invoker.ApiClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.support.WebClientAdapter;
-import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
 import java.util.Objects;
 
 @Configuration
 public class HttpClientConfiguration {
-    private final String apiKey;
+    private final String backEndUrl;
 
     @Autowired
-    public HttpClientConfiguration(@Value("${cta.train-api-key}") String apiKey) {
-        this.apiKey = Objects.requireNonNull(apiKey);
+    public HttpClientConfiguration(@Value("${cta4j.back-end-url}") String backEndUrl) {
+        this.backEndUrl = Objects.requireNonNull(backEndUrl);
     }
 
     @Bean
-    public TrainClient trainClient() {
-        String baseUrl = """
-        https://lapi.transitchicago.com/api/1.0?key=%s&outputType=json""".formatted(this.apiKey);
+    public TrainApi trainApi() {
+        ApiClient apiClient = new ApiClient();
 
-        WebClient webClient = WebClient.create(baseUrl);
+        apiClient.setBasePath(this.backEndUrl);
 
-        WebClientAdapter webClientAdapter = WebClientAdapter.forClient(webClient);
-
-        HttpServiceProxyFactory factory = HttpServiceProxyFactory.builder()
-                                                                 .clientAdapter(webClientAdapter)
-                                                                 .build();
-
-        return factory.createClient(TrainClient.class);
+        return new TrainApi(apiClient);
     }
 }
