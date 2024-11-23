@@ -1,10 +1,10 @@
 name: CTA Holiday Train Bot PR CI
 on:
-  pull_request_target:
+  pull_request:
     branches: [ "main" ]
 jobs:
   build:
-    name: Build with Maven
+    name: Build and Test with Maven
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repository
@@ -14,7 +14,16 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '21'
-      - name: Build with Maven
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - name: Maven Clean
+        run: mvn clean --file pom.xml
+      - name: Maven Package
         env:
           CTA_RUN: ${{ secrets.CTA_RUN }}
           CTA_TRAIN_API_KEY: ${{ secrets.CTA_TRAIN_API_KEY }}
