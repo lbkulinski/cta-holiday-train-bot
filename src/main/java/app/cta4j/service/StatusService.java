@@ -1,8 +1,10 @@
 package app.cta4j.service;
 
 import app.cta4j.client.cta4j.api.TrainApi;
+import app.cta4j.client.cta4j.invoker.ApiException;
 import app.cta4j.client.cta4j.model.Train;
 import com.rollbar.notifier.Rollbar;
+import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +46,20 @@ public final class StatusService {
 
         try {
             trains = this.trainApi.getUpcomingStations(this.run);
+        } catch (ApiException e) {
+            int code = e.getCode();
+
+            if (code == HttpStatus.SC_NOT_FOUND) {
+                return null;
+            }
+
+            this.rollbar.error(e);
+
+            String message = e.getMessage();
+
+            StatusService.LOGGER.error(message, e);
+
+            return null;
         } catch (Exception e) {
             this.rollbar.error(e);
 
