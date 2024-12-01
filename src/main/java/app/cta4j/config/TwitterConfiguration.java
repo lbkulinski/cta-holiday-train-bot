@@ -29,6 +29,10 @@ public class TwitterConfiguration {
                                                            .apiSecretKey(apiKeySecret)
                                                            .build();
 
-        return new TwitterClient(credentials);
+        TwitterClient client = new TwitterClient(credentials);
+
+        client.setAutomaticRetry(false);
+
+        return client;
     }
 }

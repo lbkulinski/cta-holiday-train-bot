@@ -44,36 +44,45 @@ public final class MessageService {
     public void postStatus(String status) {
         Objects.requireNonNull(status);
 
-        try {
-            this.twitterClient.postTweet(status);
-        } catch (Exception e) {
-            this.rollbar.error(e);
+        Thread.ofVirtual()
+              .start(() -> {
+                  try {
+                      this.twitterClient.postTweet(status);
+                  } catch (Exception e) {
+                      this.rollbar.error(e);
 
-            String message = e.getMessage();
+                      String message = e.getMessage();
 
-            MessageService.LOGGER.error(message, e);
-        }
+                      MessageService.LOGGER.error(message, e);
+                  }
+              });
 
-        try {
-            this.mastodonClient.statuses()
-                    .postStatus(status)
-                    .execute();
-        } catch (BigBoneRequestException e) {
-            this.rollbar.error(e);
+        Thread.ofVirtual()
+              .start(() -> {
+                  try {
+                      this.mastodonClient.statuses()
+                                         .postStatus(status)
+                                         .execute();
+                  } catch (BigBoneRequestException e) {
+                      this.rollbar.error(e);
 
-            String message = e.getMessage();
+                      String message = e.getMessage();
 
-            MessageService.LOGGER.error(message, e);
-        }
+                      MessageService.LOGGER.error(message, e);
+                  }
+              });
 
-        try {
-            this.blueskyClient.postSkeet(status);
-        } catch (Exception e) {
-            this.rollbar.error(e);
+        Thread.ofVirtual()
+              .start(() -> {
+                  try {
+                      this.blueskyClient.postSkeet(status);
+                  } catch (Exception e) {
+                      this.rollbar.error(e);
 
-            String message = e.getMessage();
+                      String message = e.getMessage();
 
-            MessageService.LOGGER.error(message, e);
-        }
+                      MessageService.LOGGER.error(message, e);
+                  }
+              });
     }
 }
