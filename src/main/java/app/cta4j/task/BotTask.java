@@ -22,7 +22,7 @@ public final class BotTask {
         this.messageService = Objects.requireNonNull(messageService);
     }
 
-    @Scheduled(cron = "0 0/5 * * * *")
+    @Scheduled(cron = "0 0/10 * * * *")
     public void runScheduledTask() {
         String status = this.service.getStatus();
 
