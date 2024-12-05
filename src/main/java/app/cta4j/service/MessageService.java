@@ -47,19 +47,6 @@ public final class MessageService {
         Thread.ofVirtual()
               .start(() -> {
                   try {
-                      this.twitterClient.postTweet(status);
-                  } catch (Exception e) {
-                      this.rollbar.error(e);
-
-                      String message = e.getMessage();
-
-                      MessageService.LOGGER.error(message, e);
-                  }
-              });
-
-        Thread.ofVirtual()
-              .start(() -> {
-                  try {
                       this.mastodonClient.statuses()
                                          .postStatus(status)
                                          .execute();
@@ -84,5 +71,22 @@ public final class MessageService {
                       MessageService.LOGGER.error(message, e);
                   }
               });
+    }
+
+    public void postTweet(String status) {
+        Objects.requireNonNull(status);
+
+        Thread.ofVirtual()
+                .start(() -> {
+                    try {
+                        this.twitterClient.postTweet(status);
+                    } catch (Exception e) {
+                        this.rollbar.error(e);
+
+                        String message = e.getMessage();
+
+                        MessageService.LOGGER.error(message, e);
+                    }
+                });
     }
 }
