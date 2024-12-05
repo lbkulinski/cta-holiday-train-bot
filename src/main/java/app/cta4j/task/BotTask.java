@@ -22,8 +22,8 @@ public final class BotTask {
         this.messageService = Objects.requireNonNull(messageService);
     }
 
-    @Scheduled(cron = "0 0/10 * * * *")
-    public void runScheduledTask() {
+    @Scheduled(cron = "0 0/5 * * * *")
+    public void postStatus() {
         String status = this.service.getStatus();
 
         if (status == null) {
@@ -33,8 +33,21 @@ public final class BotTask {
         this.messageService.postStatus(status);
     }
 
+    @Scheduled(cron = "0 0/10 * * * *")
+    public void postTweet() {
+        String status = this.service.getStatus();
+
+        if (status == null) {
+            return;
+        }
+
+        this.messageService.postTweet(status);
+    }
+
     @PostConstruct
     public void runOnStartup() {
-        this.runScheduledTask();
+        this.postStatus();
+
+        this.postTweet();
     }
 }
